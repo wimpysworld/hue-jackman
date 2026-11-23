@@ -46,6 +46,54 @@ func TestFindDevice(t *testing.T) {
 	if info.Product != "Razer Wolverine V2 Chroma" {
 		t.Fatalf("got Product %q, want Razer Wolverine V2 Chroma", info.Product)
 	}
+	if info.PhysicalPath != "1-1.2.2.1" {
+		t.Fatalf("got PhysicalPath %q, want 1-1.2.2.1", info.PhysicalPath)
+	}
+}
+
+func TestFindDevicesMultipleSorted(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	for _, dev := range []struct {
+		path   string
+		busnum string
+		devnum string
+	}{
+		{"1-10", "1", "10"},
+		{"1-2.1", "1", "4"},
+		{"1-2", "1", "3"},
+	} {
+		dir := filepath.Join(root, "bus", "usb", "devices", dev.path)
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatalf("mkdir %s: %v", dev.path, err)
+		}
+		for name, val := range map[string]string{
+			"idVendor":  "1532\n",
+			"idProduct": "0a2e\n",
+			"busnum":    dev.busnum + "\n",
+			"devnum":    dev.devnum + "\n",
+			"product":   "Razer Wolverine V2 Chroma\n",
+		} {
+			if err := os.WriteFile(filepath.Join(dir, name), []byte(val), 0o644); err != nil {
+				t.Fatalf("write %s: %v", name, err)
+			}
+		}
+	}
+
+	got, err := FindDevices(root, 0x1532, 0x0a2e)
+	if err != nil {
+		t.Fatalf("FindDevices failed: %v", err)
+	}
+	want := []string{"1-2", "1-2.1", "1-10"}
+	if len(got) != len(want) {
+		t.Fatalf("got %d devices, want %d", len(got), len(want))
+	}
+	for i, w := range want {
+		if got[i].PhysicalPath != w {
+			t.Errorf("device[%d].PhysicalPath = %q, want %q", i, got[i].PhysicalPath, w)
+		}
+	}
 }
 
 func TestLinuxUSBDevFSABI(t *testing.T) {

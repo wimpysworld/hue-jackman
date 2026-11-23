@@ -49,34 +49,34 @@ just build
 ## Usage
 
 ```bash
-# Read firmware version, serial number, device name, and active profile
-sudo ./bin/hue-jackman info
+# Inspect connected controllers (firmware, serial, device name, active profile)
+hue-jackman
 
 # Set the left and right light strips independently (left red, right blue)
-sudo ./bin/hue-jackman segments FF0000 0000FF
+hue-jackman rgb segments FF0000 0000FF
 
 # Set both strips to one solid colour
-sudo ./bin/hue-jackman static FF00FF
+hue-jackman rgb static FF00FF
 
 # Set 1-colour or 2-colour breathing, spectrum cycling, brightness, or off
-sudo ./bin/hue-jackman breathing 00FF00 FF00FF
-sudo ./bin/hue-jackman spectrum
-sudo ./bin/hue-jackman brightness 128
-sudo ./bin/hue-jackman off
+hue-jackman rgb breathe 00FF00 FF00FF
+hue-jackman rgb spectrum
+hue-jackman brightness 128
+hue-jackman rgb off
 ```
 
-Pass `--dry-run` to print encoded 64-byte frames without touching USB, or `--verbose` to log raw TX and RX frames to `stderr`.
+Pass `--device <N>` when multiple controllers are connected, `--dry-run` to print encoded 64-byte frames without touching USB, or `--verbose` to log raw TX and RX frames to `stderr`. Run `hue-jackman <command> --help` for full values and options.
 
 | Command | Action |
 | --- | --- |
-| `info` | Read firmware version, serial number, device name, and active profile |
-| `segments <LEFT> <RIGHT>` | Set left (`col 0`) and right (`col 1`) strips independently (`RRGGBB`) |
-| `static <RRGGBB>` | Set both strips to one solid colour |
-| `breathing <RGB1> [RGB2]` | Set 1-colour or 2-colour breathing |
-| `spectrum` | Enable spectrum cycling |
-| `brightness <0-255>` | Set Chroma brightness (`led_id 0x05`) |
-| `off` | Turn Chroma lighting off |
-| `raw <class> <cmd> [hex...]` | Send an arbitrary `0x0f` vendor command |
+| `hue-jackman` | Inspect connected controllers (alias: `hue-jackman info`) |
+| `hue-jackman rgb segments <LEFT> <RIGHT>` | Set left (`col 0`) and right (`col 1`) strips independently (`RRGGBB`) |
+| `hue-jackman rgb static <RRGGBB>` | Set both strips to one solid colour |
+| `hue-jackman rgb breathe <RGB1> [RGB2]` | Set 1-colour or 2-colour breathing (alias: `breathing`) |
+| `hue-jackman rgb spectrum` | Enable spectrum cycling |
+| `hue-jackman rgb off` | Turn Chroma lighting off |
+| `hue-jackman brightness <0-255>` | Set Chroma brightness (`led_id 0x05`) |
+| `hue-jackman raw <class> <cmd> [hex...]` | Send an arbitrary `0x0f` vendor command |
 
 ## USB permissions
 

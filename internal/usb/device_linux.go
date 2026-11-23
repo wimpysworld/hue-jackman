@@ -224,7 +224,26 @@ func (d *Device) closeFDs() error {
 
 // Exchange encodes and sends a 64-byte GIP 0x0f request on endpoint 0x01 and reads
 // from endpoint 0x81 until the matching 64-byte GIP 0x10 reply arrives or timeout expires.
+// If a stale 0x10 reply from a prior transaction or xpad re-probe is drained and no matching
+// reply follows within a short window, Exchange retransmits once with the next sequence byte.
 func (d *Device) Exchange(req protocol.Request) (protocol.Response, error) {
+	overallDeadline := time.Now().Add(d.timeout)
+	const maxAttempts = 2
+
+	for attempt := range maxAttempts {
+		resp, stale, err := d.exchangeOnce(req, overallDeadline, attempt < maxAttempts-1)
+		if err == nil {
+			return resp, nil
+		}
+		if !stale || attempt+1 >= maxAttempts || time.Until(overallDeadline) <= 0 {
+			return protocol.Response{}, err
+		}
+		d.logf("retrying class=0x%02x cmd=0x%02x after stale reply", req.CommandClass, req.CommandID)
+	}
+	return protocol.Response{}, fmt.Errorf("timed out waiting for 0x10 reply for class=0x%02x cmd=0x%02x", req.CommandClass, req.CommandID)
+}
+
+func (d *Device) exchangeOnce(req protocol.Request, overallDeadline time.Time, allowRetry bool) (protocol.Response, bool, error) {
 	d.seq++
 	if d.seq == 0 {
 		d.seq = 1
@@ -233,25 +252,30 @@ func (d *Device) Exchange(req protocol.Request) (protocol.Response, error) {
 
 	frame, err := protocol.EncodeRequest(seq, req)
 	if err != nil {
-		return protocol.Response{}, err
+		return protocol.Response{}, false, err
 	}
 	d.logf("TX seq=0x%02x class=0x%02x cmd=0x%02x: %x", seq, req.CommandClass, req.CommandID, frame)
 
-	if _, err := d.transferInterrupt(protocol.EndpointOut, frame[:], d.timeout); err != nil {
-		return protocol.Response{}, fmt.Errorf("interrupt OUT 0x%02x: %w", protocol.EndpointOut, err)
+	rem := time.Until(overallDeadline)
+	if rem <= 0 {
+		return protocol.Response{}, false, fmt.Errorf("timed out before TX seq=0x%02x", seq)
+	}
+	if _, err := d.transferInterrupt(protocol.EndpointOut, frame[:], rem); err != nil {
+		return protocol.Response{}, false, fmt.Errorf("interrupt OUT 0x%02x: %w", protocol.EndpointOut, err)
 	}
 
-	deadline := time.Now().Add(d.timeout)
 	var inBuf [protocol.FrameSize]byte
+	sawStale := false
+	rxDeadline := overallDeadline
 	for {
-		rem := time.Until(deadline)
+		rem := time.Until(rxDeadline)
 		if rem <= 0 {
-			return protocol.Response{}, fmt.Errorf("timed out waiting for 0x10 reply for seq=0x%02x", seq)
+			return protocol.Response{}, sawStale, fmt.Errorf("timed out waiting for 0x10 reply for seq=0x%02x", seq)
 		}
 
 		n, err := d.transferInterrupt(protocol.EndpointIn, inBuf[:], rem)
 		if err != nil {
-			return protocol.Response{}, fmt.Errorf("interrupt IN 0x%02x: %w", protocol.EndpointIn, err)
+			return protocol.Response{}, sawStale, fmt.Errorf("interrupt IN 0x%02x: %w", protocol.EndpointIn, err)
 		}
 		if n == 0 {
 			continue
@@ -266,13 +290,21 @@ func (d *Device) Exchange(req protocol.Request) (protocol.Response, error) {
 		d.logf("RX len=%d: %x", n, inBuf[:n])
 		resp, err := protocol.DecodeResponse(inBuf[:n])
 		if err != nil {
-			return protocol.Response{}, err
+			return protocol.Response{}, sawStale, err
 		}
-		if resp.Seq != seq {
-			d.logf("RX stale seq=0x%02x (want 0x%02x)", resp.Seq, seq)
+		if resp.Seq != seq || resp.CommandClass != req.CommandClass || resp.CommandID != req.CommandID {
+			d.logf("RX stale seq=0x%02x class=0x%02x cmd=0x%02x (want seq=0x%02x class=0x%02x cmd=0x%02x)",
+				resp.Seq, resp.CommandClass, resp.CommandID, seq, req.CommandClass, req.CommandID)
+			sawStale = true
+			if allowRetry {
+				shortDeadline := time.Now().Add(150 * time.Millisecond)
+				if shortDeadline.Before(rxDeadline) {
+					rxDeadline = shortDeadline
+				}
+			}
 			continue
 		}
-		return resp, nil
+		return resp, false, nil
 	}
 }
 

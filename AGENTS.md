@@ -37,7 +37,7 @@ just lint correct
 
 - Target USB VID `0x1532`, PID `0x0a2e`, interface `0`, interrupt OUT `0x01`, interrupt IN `0x81`.
 - Frame every Razer vendor command as a 64-byte GIP `0x0f` request (`0x10` reply) with length `0x3c`, `transaction_id 0x1f`, up to 50 argument bytes (`0x0c..0x3d`), and an XOR checksum of bytes `0x06..0x3d` inclusive at `0x3e`.
-- Match replies on both message ID `0x10` and the rolling sequence byte (`0x02`); skip routine GIP input (`0x20`), keepalive (`0x03`), and guide (`0x07`) packets on endpoint `0x81`.
+- Match replies on message ID `0x10`, sequence byte (`0x02`), command class (`0x0a`), and command ID (`0x0b`), retrying once with the next sequence byte after a stale reply; skip routine GIP input (`0x20`), keepalive (`0x03`), and guide (`0x07`) packets on endpoint `0x81`.
 - Pin `usbdevfsURB` and transfer buffers with `runtime.Pinner` across `USBDEVFS_SUBMITURB` and `USBDEVFS_REAPURBNDELAY`. On timeout, call `USBDEVFS_DISCARDURB` and wait for `USBDEVFS_REAPURB` before unpinning.
 - Always detach a bound kernel driver (`xpad`) via `USBDEVFS_IOCTL(USBDEVFS_DISCONNECT)` on open and reattach via `USBDEVFS_CONNECT` on close unless `--keep-detached` is set.
 - Do not send `class 0x00, cmd 0x04` with payload `0x01`; sibling Wolverine firmware associates it with reset or shutdown.

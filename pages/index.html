@@ -60,16 +60,17 @@
         </div>
         <figure class="terminal" aria-label="hue-jackman command examples">
           <figcaption><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span translate="no">hue-jackman · Linux</span></figcaption>
-          <pre><code translate="no"><span class="terminal-comment"># Paint left strip red and right strip blue</span>
-<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman segments</span> <span class="terminal-argument">FF0000 0000FF</span>
+          <pre><code translate="no"><span class="terminal-comment"># Inspect connected controllers</span>
+<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman</span>
+
+<span class="terminal-comment"># Paint left strip red and right strip blue</span>
+<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman rgb segments</span> <span class="terminal-argument">FF0000 0000FF</span>
 
 <span class="terminal-comment"># Set both strips to one solid colour</span>
-<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman static</span> <span class="terminal-argument">FF00FF</span>
+<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman rgb static</span> <span class="terminal-argument">FF00FF</span>
 
-<span class="terminal-comment"># Switch to two-colour breathing</span>
-<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman breathing</span> <span class="terminal-argument">00FF00 FF00FF</span>
-
-<span class="terminal-comment"># Adjust Chroma brightness (0 to 255)</span>
+<span class="terminal-comment"># Two-colour breathing and brightness</span>
+<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman rgb breathe</span> <span class="terminal-argument">00FF00 FF00FF</span>
 <span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman brightness</span> <span class="terminal-argument">128</span></code></pre>
         </figure>
       </section>
@@ -104,10 +105,10 @@
           <p>Run presets, write custom per-segment colours, query controller metadata, or pass <code>--dry-run</code> to inspect 64-byte frames without touching USB.</p>
         </div>
         <ol class="steps">
-          <li><code translate="no">hue-jackman segments</code><h3>Paint both strips</h3><p>Pass two hex colours to set the left and right lighting segments independently.</p></li>
-          <li><code translate="no">hue-jackman static</code><h3>Run built-in effects</h3><p>Choose solid colour, single or dual-colour breathing, spectrum cycling, or off.</p></li>
+          <li><code translate="no">hue-jackman</code><h3>Inspect hardware</h3><p>Run without arguments to read firmware version, serial number, USB path, and active profile.</p></li>
+          <li><code translate="no">hue-jackman rgb segments</code><h3>Paint both strips</h3><p>Pass two hex colours to set the left and right lighting segments independently.</p></li>
+          <li><code translate="no">hue-jackman rgb static</code><h3>Run built-in effects</h3><p>Choose solid colour, single or dual-colour breathing, spectrum cycling, or off.</p></li>
           <li><code translate="no">hue-jackman brightness</code><h3>Tune brightness</h3><p>Set Chroma brightness from <code>0</code> to <code>255</code> on <code>led_id 0x05</code>.</p></li>
-          <li><code translate="no">hue-jackman info</code><h3>Read hardware info</h3><p>Query firmware version, serial number, device name, and active profile safely.</p></li>
         </ol>
         <p class="workflow-note">Need to experiment? Use <code translate="no">hue-jackman raw &lt;class&gt; &lt;cmd&gt; [hex...]</code> with <code>--verbose</code> to log every TX and RX frame.</p>
       </section>
