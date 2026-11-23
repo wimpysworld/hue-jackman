@@ -1,5 +1,9 @@
 version: 2
 
+git:
+  ignore_tags:
+    - latest
+
 before:
   hooks:
     - >-
@@ -17,7 +21,9 @@ builds:
     env: [CGO_ENABLED=0]
     goos: [linux]
     goarch: [amd64, arm64]
-    ldflags: [-s -w]
+    flags: [-trimpath]
+    ldflags:
+      - "-s -w -X main.version={{ .Version }}"
 
 archives:
   - id: bare
@@ -37,7 +43,7 @@ nfpms:
     vendor: Martin Wimpress
     maintainer: "Martin Wimpress <code@wimpress.io>"
     description: "Control Chroma RGB lighting on the Razer Wolverine V2 Chroma from Linux."
-    homepage: https://github.com/wimpysworld/hue-jackman
+    homepage: https://hue-jackman.wimpys.world/
     license: BlueOak-1.0.0
     formats: [deb, rpm, apk, archlinux]
     file_name_template: "{{ .ConventionalFileName }}"
@@ -50,7 +56,7 @@ aurs:
     provides: [hue-jackman]
     conflicts: [hue-jackman]
     description: "Control Chroma RGB lighting on the Razer Wolverine V2 Chroma from Linux."
-    homepage: https://github.com/wimpysworld/hue-jackman
+    homepage: https://hue-jackman.wimpys.world/
     maintainers:
       - "Martin Wimpress <code@wimpress.io>"
     license: BlueOak-1.0.0

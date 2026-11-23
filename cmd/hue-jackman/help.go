@@ -19,6 +19,7 @@ Options:
   --dry-run                     Print encoded 64-byte frames without USB access.
   --keep-detached               Leave xpad detached on exit.
   --verbose                     Log raw USB TX/RX frames to stderr.
+  --version                     Show version without device access.
   -h, --help                    Show help without device access.
 
 Examples:

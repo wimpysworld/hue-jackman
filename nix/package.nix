@@ -17,8 +17,12 @@ pkgs.buildGo126Module {
   ldflags = [
     "-s"
     "-w"
+    "-X main.version=${version}"
   ];
   meta = {
+    description = "Razer Wolverine V2 Chroma RGB control for Linux.";
+    homepage = "https://hue-jackman.wimpys.world/";
+    license = pkgs.lib.licenses.blueOak100;
     mainProgram = "hue-jackman";
     platforms = pkgs.lib.platforms.linux;
   };

@@ -16,6 +16,9 @@ import (
 
 const defaultProductName = "Razer Wolverine V2 Chroma"
 
+// version is set at release time via -ldflags "-X main.version=...".
+var version = "dev"
+
 // CLIError wraps an error with an explicit process exit code (2 for usage, 1 for runtime).
 type CLIError struct {
 	Err  error
@@ -56,6 +59,7 @@ func liveDeviceAccess() deviceAccess {
 type command struct {
 	name         string
 	help         bool
+	showVersion  bool
 	deviceIndex  int
 	devicePath   string
 	seenDevice   bool
@@ -90,6 +94,13 @@ func run(args []string, stdout, stderr io.Writer) error {
 
 func runWithAccess(args []string, stdout, stderr io.Writer, access deviceAccess) error {
 	cmd, err := parseArgs(args)
+	if err == nil && cmd.showVersion {
+		_, writeErr := fmt.Fprintf(stdout, "hue-jackman %s\n", version)
+		if writeErr != nil {
+			return &CLIError{Err: writeErr, Code: 1}
+		}
+		return nil
+	}
 	code := 2
 	headerOut := stderr
 	if err == nil {
@@ -170,6 +181,13 @@ func parseArgs(args []string) (command, error) {
 		positional = append(positional, arg)
 	}
 
+	if c.showVersion {
+		if c.name != "" || len(positional) > 0 || c.help || c.seenDevice || c.seenTimeout || c.dryRun || c.keepDetached || c.verbose || c.seenLED || c.seenVarstore {
+			return c, errors.New("--version accepts no other arguments")
+		}
+		return c, nil
+	}
+
 	if c.name == "" {
 		if c.help {
 			return c, nil
@@ -191,6 +209,12 @@ func (c *command) parseOption(arg string, rest []string) ([]string, error) {
 			return rest, fmt.Errorf("%s accepts no value", opt)
 		}
 		c.help = true
+		return rest, nil
+	case "--version":
+		if hasEq {
+			return rest, errors.New("--version accepts no value")
+		}
+		c.showVersion = true
 		return rest, nil
 	case "--dry-run":
 		if hasEq {

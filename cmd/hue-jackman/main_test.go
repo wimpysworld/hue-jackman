@@ -108,6 +108,41 @@ func TestHelpCommandsAvoidDeviceAccess(t *testing.T) {
 	}
 }
 
+func TestVersionFlagAvoidsDeviceAccess(t *testing.T) {
+	called := false
+	access := deviceAccess{
+		discover: func() ([]usb.DeviceInfo, error) {
+			called = true
+			return nil, errors.New("should not discover on version")
+		},
+	}
+
+	orig := version
+	version = "0.1.0"
+	t.Cleanup(func() { version = orig })
+
+	var stdout, stderr bytes.Buffer
+	if err := runWithAccess([]string{"--version"}, &stdout, &stderr, access); err != nil {
+		t.Fatalf("--version failed: %v", err)
+	}
+	if called {
+		t.Fatal("--version touched USB discovery")
+	}
+	if got := stdout.String(); got != "hue-jackman 0.1.0\n" {
+		t.Fatalf("stdout = %q, want %q", got, "hue-jackman 0.1.0\n")
+	}
+	if stderr.Len() != 0 {
+		t.Fatalf("unexpected stderr: %q", stderr.String())
+	}
+
+	stdout.Reset()
+	stderr.Reset()
+	err := runWithAccess([]string{"--version", "rgb"}, &stdout, &stderr, access)
+	if err == nil || exitCode(err) != 2 {
+		t.Fatalf("expected exit 2 for --version with extra args, got err=%v code=%d", err, exitCode(err))
+	}
+}
+
 func TestZeroArgInspectAndInfoAlias(t *testing.T) {
 	t.Parallel()
 
