@@ -14,7 +14,8 @@ mcp:
   playwright: false
 
 repository:
-  description: Control Chroma RGB lighting on the Razer Wolverine V2 Chroma from Linux
+  description: >-
+    Razer Wolverine V2 Chroma RGB control for Linux. Hijack the hues, bub 🎮
   has_wiki: false
   has_discussions: false
   has_projects: false
@@ -36,6 +37,15 @@ repository:
   secret_scanning: enabled
   secret_scanning_push_protection: enabled
   secret_scanning_non_provider_patterns: enabled
+  topics:
+    - razer
+    - razer-chroma
+    - razer-wolverine
+    - wolverine-v2-chroma
+    - rgb
+    - xbox-controller
+    - linux
+    - cli
 
 immutable_releases:
   enabled: false
