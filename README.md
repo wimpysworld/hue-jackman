@@ -1,4 +1,12 @@
-# hue-jackman
+<h1 align="center">
+  <img src="pages/icon.svg" width="256" height="256" alt="hue-jackman">
+  <br />
+  hue-jackman
+</h1>
+
+<p align="center"><b>Razer Wolverine V2 Chroma RGB control for Linux. Hijack the hues, bub 🎮</b></p>
+
+<p align="center">Made with 💝 for 🐧</p>
 
 `hue-jackman` is a Linux command-line tool that controls Chroma RGB lighting on the Razer Wolverine V2 Chroma (`1532:0a2e`). It speaks directly to Linux `usbdevfs` in pure Go with no CGo or `libusb` dependency, detaches `xpad` while sending commands, and reattaches `xpad` on exit.
 

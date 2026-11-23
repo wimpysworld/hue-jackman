@@ -16,6 +16,7 @@ mcp:
 repository:
   description: >-
     Razer Wolverine V2 Chroma RGB control for Linux. Hijack the hues, bub 🎮
+  homepage: https://hue-jackman.wimpys.world/
   has_wiki: false
   has_discussions: false
   has_projects: false
@@ -140,9 +141,10 @@ ruleset:
 # branch: omit to use the current repository default branch.
 # cname: omit to preserve the domain, use "" to clear it, or set a domain.
 pages:
-  enabled: false
+  enabled: true
   generator: static
   path: pages
+  cname: hue-jackman.wimpys.world
   links:
     website: https://wimpys.world/
     forum: ""
@@ -152,16 +154,16 @@ pages:
     linkedin: https://linkedin.com/in/martinwimpress
     slack: ""
     discord: https://discord.com/invite/vUsydfP
-    matrix: "https://matrix.to/#/@wimpress:matrix.org"
-    youtube: https://youtube.com/WimpysWorld
-    twitch: https://twitch.tv/WimpysWorld
+    matrix: ""
+    youtube: ""
+    twitch: ""
     peertube: ""
     tiktok: ""
     podcast: https://linuxmatters.sh
     instagram: ""
     pixelfed: ""
-    steam: https://steamcommunity.com/id/wimpress/
-    itchio: https://wimpress.itch.io/
+    steam: ""
+    itchio: ""
     patreon: ""
     github_sponsors: https://github.com/sponsors/flexiondotorg
     kofi: ""

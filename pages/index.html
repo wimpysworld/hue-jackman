@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="rgb(19, 22.5, 30.5)" media="(prefers-color-scheme: dark)">
+    <meta name="description" content="Razer Wolverine V2 Chroma RGB control for Linux. Hijack the hues, bub.">
+    <title>hue-jackman · Razer Wolverine V2 Chroma RGB control for Linux</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <script src="theme.js"></script>
+    <script src="copy.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@digicreon/mucss@1.4.9/dist/mu.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="container site-header">
+      <a class="brand" href="./" aria-label="hue-jackman home">
+        <img class="brand-mark" src="icon.svg" alt="" width="40" height="40">
+        <span class="brand-name" translate="no">hue-jackman</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <ul>
+          <!-- tailor:navigation:start -->
+          <li><a target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/hue-jackman?tab=readme-ov-file">Documentation</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/hue-jackman/releases">Download</a></li>
+          <!-- tailor:navigation:end -->
+        </ul>
+      </nav>
+      <div class="header-tools">
+        <a class="icon-button" target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/hue-jackman" aria-label="hue-jackman on GitHub" title="hue-jackman on GitHub">
+          <span class="octicon github-icon" aria-hidden="true"></span>
+        </a>
+        <label id="theme-picker" class="theme-picker" hidden>
+          <span id="theme-sun" class="octicon" aria-hidden="true"></span>
+          <span id="theme-moon" class="octicon" aria-hidden="true" hidden></span>
+          <span class="visually-hidden">Theme</span>
+          <select id="theme-select" title="Theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <main id="main" class="container" tabindex="-1">
+      <section class="site-hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Razer Wolverine V2 Chroma RGB control for Linux</p>
+          <h1 id="hero-title">Hijack the hues, bub.</h1>
+          <p class="lead">Program both RGB light strips on the Razer Wolverine V2 Chroma from one pure-Go Linux CLI. Set independent left and right strip colours, built-in effects, and brightness without Windows.</p>
+          <div class="site-hero-actions">
+            <a class="primary-action" href="#install">Get hue-jackman <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+            <a class="text-link" href="https://github.com/wimpysworld/hue-jackman?tab=readme-ov-file#usage">Quick start <span class="octicon inline-icon link-external" aria-hidden="true"></span></a>
+          </div>
+          <p class="hero-note">Open source. Linux only. Zero CGo or <code>libusb</code> dependencies. Targets USB ID <code translate="no">1532:0a2e</code> over <code>usbdevfs</code>.</p>
+        </div>
+        <figure class="terminal" aria-label="hue-jackman command examples">
+          <figcaption><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span translate="no">hue-jackman · Linux</span></figcaption>
+          <pre><code translate="no"><span class="terminal-comment"># Paint left strip red and right strip blue</span>
+<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman segments</span> <span class="terminal-argument">FF0000 0000FF</span>
+
+<span class="terminal-comment"># Set both strips to one solid colour</span>
+<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman static</span> <span class="terminal-argument">FF00FF</span>
+
+<span class="terminal-comment"># Switch to two-colour breathing</span>
+<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman breathing</span> <span class="terminal-argument">00FF00 FF00FF</span>
+
+<span class="terminal-comment"># Adjust Chroma brightness (0 to 255)</span>
+<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman brightness</span> <span class="terminal-argument">128</span></code></pre>
+        </figure>
+      </section>
+
+      <section id="features" class="features section-rule" aria-labelledby="features-title">
+        <div>
+          <p class="eyebrow">Built for Linux</p>
+          <h2 id="features-title">Two light strips.<br>Full control.</h2>
+          <p>The Wolverine V2 Chroma exposes Xbox One Game Input Protocol (GIP) interfaces only, with no USB HID node. <code translate="no">hue-jackman</code> wraps Razer Extended Matrix commands in 64-byte GIP vendor frames and sends them straight to Linux <code>usbdevfs</code>.</p>
+          <a class="text-link" href="#protocol">Inspect the hardware protocol <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+        </div>
+        <dl class="feature-list">
+          <div>
+            <dt><span class="feature-number" aria-hidden="true">01</span> Independent two-segment RGB</dt>
+            <dd>Address the left strip (<code>row 0, col 0</code>) and right strip (<code>row 0, col 1</code>) separately with full 24-bit colours through Extended Matrix Custom Frame mode (<code>0x0f 0x03</code>).</dd>
+          </div>
+          <div>
+            <dt><span class="feature-number" aria-hidden="true">02</span> Clean <code>xpad</code> hand-off</dt>
+            <dd>Detaches the kernel <code>xpad</code> driver from interface <code>0</code> while sending vendor frames and reattaches it on exit, so the gamepad keeps working immediately.</dd>
+          </div>
+          <div>
+            <dt><span class="feature-number" aria-hidden="true">03</span> Single static Go binary</dt>
+            <dd>Built with <code>CGO_ENABLED=0</code> and the Go standard library only. No <code>libusb</code>, no custom kernel module, and no Xbox GIP authentication required.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="commands" class="section-rule" aria-labelledby="commands-title">
+        <div class="section-heading">
+          <p class="eyebrow">Commands</p>
+          <h2 id="commands-title">From dual strips to raw frames</h2>
+          <p>Run presets, write custom per-segment colours, query controller metadata, or pass <code>--dry-run</code> to inspect 64-byte frames without touching USB.</p>
+        </div>
+        <ol class="steps">
+          <li><code translate="no">hue-jackman segments</code><h3>Paint both strips</h3><p>Pass two hex colours to set the left and right lighting segments independently.</p></li>
+          <li><code translate="no">hue-jackman static</code><h3>Run built-in effects</h3><p>Choose solid colour, single or dual-colour breathing, spectrum cycling, or off.</p></li>
+          <li><code translate="no">hue-jackman brightness</code><h3>Tune brightness</h3><p>Set Chroma brightness from <code>0</code> to <code>255</code> on <code>led_id 0x05</code>.</p></li>
+          <li><code translate="no">hue-jackman info</code><h3>Read hardware info</h3><p>Query firmware version, serial number, device name, and active profile safely.</p></li>
+        </ol>
+        <p class="workflow-note">Need to experiment? Use <code translate="no">hue-jackman raw &lt;class&gt; &lt;cmd&gt; [hex...]</code> with <code>--verbose</code> to log every TX and RX frame.</p>
+      </section>
+
+      <section id="protocol" class="section-rule" aria-labelledby="protocol-title">
+        <div class="section-heading">
+          <p class="eyebrow">Hardware and permissions</p>
+          <h2 id="protocol-title">Verified on Razer Wolverine V2 Chroma</h2>
+          <p><code translate="no">hue-jackman</code> discovers the controller from <code>/sys/bus/usb/devices</code> and communicates over interface <code>0</code> interrupt endpoints.</p>
+        </div>
+        <div class="overflow-auto spec-table-wrap">
+          <table class="striped">
+            <thead>
+              <tr>
+                <th scope="col">Property</th>
+                <th scope="col">Verified value</th>
+                <th scope="col">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">USB identity</th>
+                <td><code translate="no">1532:0a2e</code></td>
+                <td>Razer Wolverine V2 Chroma (Xbox One GIP class <code>ff/47/d0</code>)</td>
+              </tr>
+              <tr>
+                <th scope="row">USB endpoints</th>
+                <td>Interface <code>0</code>, OUT <code>0x01</code>, IN <code>0x81</code></td>
+                <td>64-byte interrupt transfers; skips routine <code>0x20</code> input packets</td>
+              </tr>
+              <tr>
+                <th scope="row">Vendor framing</th>
+                <td>GIP <code>0x0f</code> request, <code>0x10</code> reply</td>
+                <td>60-byte Razer payload (<code>0x3c</code>), <code>transaction_id 0x1f</code>, XOR CRC at <code>0x3e</code></td>
+              </tr>
+              <tr>
+                <th scope="row">Lighting matrix</th>
+                <td><code>row 0</code>, <code>col 0</code> (left) and <code>col 1</code> (right)</td>
+                <td>Extended Matrix Custom Frame (<code>0x0f 0x02</code> effect <code>0x08</code> + <code>0x0f 0x03</code>)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="udev-card">
+          <h3>Run without <code>sudo</code></h3>
+          <p>Add this rule to <code>/etc/udev/rules.d/99-hue-jackman.rules</code>, then run <code>sudo udevadm control --reload-rules &amp;&amp; sudo udevadm trigger</code>.</p>
+          <div class="udev-rule-row">
+            <code class="install-command" id="udev-rule" translate="no">SUBSYSTEM=="usb", ATTR{idVendor}=="1532", ATTR{idProduct}=="0a2e", TAG+="uaccess"</code>
+            <button class="copy-button" type="button" data-copy="udev-rule" aria-label="Copy the udev rule" title="Copy" hidden>
+              <span class="octicon copy-icon" aria-hidden="true"></span>
+            </button>
+            <span class="visually-hidden" role="status"></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="install" class="install section-rule" aria-labelledby="install-title">
+        <div class="section-heading">
+          <p class="eyebrow">Install</p>
+          <h2 id="install-title">Get hue-jackman on Linux</h2>
+          <p>Choose your distribution. Each repository is signed and keeps <code translate="no">hue-jackman</code> up to date.</p>
+        </div>
+        <!-- Install tiles: one per package repository, then one command tile for bin. -->
+        <ul class="install-grid">
+          <li class="install-distro">
+            <a class="install-tile" data-repo="apt" href="https://apt.wimpys.world/#hue-jackman">
+              <img class="install-logo" src="https://apt.wimpys.world/logo.svg" alt="" width="36" height="36" decoding="async">
+              <span class="install-text">
+                <span class="install-platform">Linux</span>
+                <span class="install-name">Debian and Ubuntu</span>
+                <span class="install-host" translate="no">apt.wimpys.world</span>
+              </span>
+              <span class="octicon inline-icon arrow-up-right" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li class="install-distro">
+            <a class="install-tile" data-repo="rpm" href="https://rpm.wimpys.world/#hue-jackman">
+              <img class="install-logo" src="https://rpm.wimpys.world/logo.svg" alt="" width="36" height="36" decoding="async">
+              <span class="install-text">
+                <span class="install-platform">Linux</span>
+                <span class="install-name">Fedora and openSUSE</span>
+                <span class="install-host" translate="no">rpm.wimpys.world</span>
+              </span>
+              <span class="octicon inline-icon arrow-up-right" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li class="install-distro">
+            <a class="install-tile" data-repo="pkg" href="https://pkg.wimpys.world/#hue-jackman">
+              <img class="install-logo" src="https://pkg.wimpys.world/logo.svg" alt="" width="36" height="36" decoding="async">
+              <span class="install-text">
+                <span class="install-platform">Linux</span>
+                <span class="install-name">Arch Linux</span>
+                <span class="install-host" translate="no">pkg.wimpys.world</span>
+              </span>
+              <span class="octicon inline-icon arrow-up-right" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li class="install-distro">
+            <a class="install-tile" data-repo="apk" href="https://apk.wimpys.world/#hue-jackman">
+              <img class="install-logo" src="https://apk.wimpys.world/logo.svg" alt="" width="36" height="36" decoding="async">
+              <span class="install-text">
+                <span class="install-platform">Linux</span>
+                <span class="install-name">Alpine Linux</span>
+                <span class="install-host" translate="no">apk.wimpys.world</span>
+              </span>
+              <span class="octicon inline-icon arrow-up-right" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li class="install-nix">
+            <a class="install-tile" data-repo="nix" href="https://nix.wimpys.world/#hue-jackman">
+              <img class="install-logo" src="https://nix.wimpys.world/logo.svg" alt="" width="36" height="36" decoding="async">
+              <span class="install-text">
+                <span class="install-platform">Nix</span>
+                <span class="install-name">Nix and NixOS</span>
+                <span class="install-host" translate="no">nix.wimpys.world</span>
+              </span>
+              <span class="octicon inline-icon arrow-up-right" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li class="install-any">
+            <div class="install-tile install-command-tile">
+              <span class="octicon install-glyph" aria-hidden="true"></span>
+              <span class="install-text">
+                <span class="install-platform">Any Linux</span>
+                <a class="install-name" href="https://github.com/marcosnils/bin" translate="no">bin</a>
+              </span>
+              <code class="install-command" id="bin-command" translate="no">bin install github.com/wimpysworld/hue-jackman</code>
+              <button class="copy-button" type="button" data-copy="bin-command" aria-label="Copy the bin command" title="Copy" hidden>
+                <span class="octicon copy-icon" aria-hidden="true"></span>
+              </button>
+              <span class="visually-hidden" role="status"></span>
+            </div>
+          </li>
+        </ul>
+        <p class="install-note"><code translate="no">hue-jackman</code> needs read and write permission on <code>/dev/bus/usb/*</code> for <code>1532:0a2e</code>. Run with <code>sudo</code> or install the <a href="#protocol">udev rule</a> above.</p>
+        <div class="install-links">
+          <a class="text-link" href="https://github.com/wimpysworld/hue-jackman?tab=readme-ov-file#build-from-source">Build from source <span class="octicon inline-icon link-external" aria-hidden="true"></span></a>
+          <a class="text-link" href="https://github.com/wimpysworld/hue-jackman/releases/latest">Download a release <span class="octicon inline-icon link-external" aria-hidden="true"></span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="container site-footer">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a class="brand" href="./" aria-label="hue-jackman home">
+            <img class="brand-mark" src="icon.svg" alt="" width="40" height="40">
+            <span class="brand-name" translate="no">hue-jackman</span>
+          </a>
+          <p>Razer Wolverine V2 Chroma RGB control for Linux. Hijack the hues, bub 🎮</p>
+        </div>
+        <nav class="footer-links" aria-label="Footer navigation">
+          <div><h3>Resources</h3><ul>
+            <!-- tailor:footer-navigation:start -->
+            <li><a href="https://github.com/wimpysworld/hue-jackman?tab=readme-ov-file">Documentation</a></li>
+            <li><a href="https://github.com/wimpysworld/hue-jackman/blob/HEAD/SUPPORT.md">Support</a></li>
+            <!-- tailor:footer-navigation:end -->
+          </ul></div>
+          <div><h3>Project</h3><ul>
+            <li><a href="https://github.com/wimpysworld/hue-jackman">Source code</a></li>
+            <li><a href="https://github.com/wimpysworld/hue-jackman/releases">Releases</a></li>
+            <!-- tailor:license:start -->
+            <li><a href="https://github.com/wimpysworld/hue-jackman?tab=BlueOak-1.0.0-1-ov-file">License</a></li>
+            <!-- tailor:license:end -->
+          </ul></div>
+          <div><h3>Community</h3><ul>
+            <li><a href="https://github.com/wimpysworld/hue-jackman?tab=coc-ov-file">Code of Conduct</a></li>
+            <li><a href="https://github.com/wimpysworld/hue-jackman?tab=contributing-ov-file">Contributing</a></li>
+            <li><a href="https://github.com/wimpysworld/hue-jackman?tab=security-ov-file">Security</a></li>
+          </ul></div>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <p><small>© <span id="copyright-year">2026</span> <a href="https://github.com/flexiondotorg">Martin Wimpress <span class="octicon inline-icon link-external" aria-hidden="true"></span></a></small></p>
+        <!-- tailor:links:start -->
+        <nav class="connection-links" aria-label="Connect" style="display:flex;flex-wrap:wrap;gap:0.4rem">
+          <a class="icon-button" href="https://wimpys.world/" aria-label="Website" title="Website" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/globe-24.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/globe-24.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://bsky.app/profile/wimpys.world" aria-label="Bluesky" title="Bluesky" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/bluesky.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/bluesky.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://wimpysworld.social/@martin" aria-label="Mastodon" title="Mastodon" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/mastodon.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/mastodon.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://linkedin.com/in/martinwimpress" aria-label="LinkedIn" title="LinkedIn" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/briefcase-24.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/briefcase-24.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://discord.com/invite/vUsydfP" aria-label="Discord" title="Discord" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/discord.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/discord.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://linuxmatters.sh" aria-label="Podcast" title="Podcast" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/broadcast-24.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/broadcast-24.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://github.com/sponsors/flexiondotorg" aria-label="GitHub Sponsors" title="GitHub Sponsors" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/githubsponsors.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/githubsponsors.svg') center/contain no-repeat"></span></a>
+        </nav>
+        <!-- tailor:links:end -->
+      </div>
+    </footer>
+  </body>
+</html>
