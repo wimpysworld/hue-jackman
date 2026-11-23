@@ -1,0 +1,78 @@
+version: 2
+
+before:
+  hooks:
+    - >-
+      sh -c 'case "$GITHUB_REPOSITORY" in
+      ""|/*|*/|*/*/*|*[[:space:][:cntrl:]]*) ;;
+      */*) test -n "$GITHUB_REPOSITORY_OWNER" &&
+      test "$GITHUB_REPOSITORY_OWNER" = "${GITHUB_REPOSITORY%%/*}" && exit 0 ;;
+      esac;
+      echo "set GITHUB_REPOSITORY=owner/repository and GITHUB_REPOSITORY_OWNER=owner before running GoReleaser" >&2; exit 1'
+
+builds:
+  - id: "hue-jackman"
+    main: "./cmd/hue-jackman"
+    binary: "hue-jackman"
+    env: [CGO_ENABLED=0]
+    goos: [linux]
+    goarch: [amd64, arm64]
+    ldflags: [-s -w]
+
+archives:
+  - id: bare
+    formats:
+      - binary
+    name_template: "hue-jackman-{{ .Os }}-{{ .Arch }}"
+
+  - id: compressed
+    formats:
+      - tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
+
+nfpms:
+  - id: packages
+    ids: ["hue-jackman"]
+    package_name: hue-jackman
+    vendor: Martin Wimpress
+    maintainer: "Martin Wimpress <code@wimpress.io>"
+    description: "Control Chroma RGB lighting on the Razer Wolverine V2 Chroma from Linux."
+    homepage: https://github.com/wimpysworld/hue-jackman
+    license: BlueOak-1.0.0
+    formats: [deb, rpm, apk, archlinux]
+    file_name_template: "{{ .ConventionalFileName }}"
+    bindir: /usr/bin
+
+aurs:
+  - ids:
+      - compressed
+    name: hue-jackman-bin
+    provides: [hue-jackman]
+    conflicts: [hue-jackman]
+    description: "Control Chroma RGB lighting on the Razer Wolverine V2 Chroma from Linux."
+    homepage: https://github.com/wimpysworld/hue-jackman
+    maintainers:
+      - "Martin Wimpress <code@wimpress.io>"
+    license: BlueOak-1.0.0
+    private_key: "{{ .Env.AUR_KEY }}"
+    git_url: "ssh://aur@aur.archlinux.org/hue-jackman-bin.git"
+    package: |
+      install -Dm755 hue-jackman "${pkgdir}/usr/bin/hue-jackman"
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+
+changelog:
+  sort: asc
+
+release:
+  prerelease: auto
+  footer: |
+    ## Install
+
+    - Debian and Ubuntu: [apt.wimpys.world](https://apt.wimpys.world/#hue-jackman)
+    - Fedora and openSUSE: [rpm.wimpys.world](https://rpm.wimpys.world/#hue-jackman)
+    - Arch Linux: [pkg.wimpys.world](https://pkg.wimpys.world/#hue-jackman)
+    - Alpine Linux: [apk.wimpys.world](https://apk.wimpys.world/#hue-jackman)
+    - Nix and NixOS: [nix.wimpys.world](https://nix.wimpys.world/#hue-jackman)
+    - Any Linux, with [bin](https://github.com/marcosnils/bin): `bin install github.com/wimpysworld/hue-jackman`
