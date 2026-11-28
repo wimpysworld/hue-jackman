@@ -8,6 +8,17 @@
     <meta name="theme-color" content="#0d120f" media="(prefers-color-scheme: dark)">
     <meta name="description" content="Razer Wolverine V2 Chroma RGB control for Linux. Hijack the hues, bub.">
     <title>hue-jackman · Razer Wolverine V2 Chroma RGB control for Linux</title>
+    <link rel="canonical" href="https://hue-jackman.wimpys.world/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Hue Jackman">
+    <meta property="og:title" content="hue-jackman · Razer Wolverine V2 Chroma RGB control for Linux">
+    <meta property="og:description" content="Razer Wolverine V2 Chroma RGB control for Linux. Hijack the hues, bub.">
+    <meta property="og:url" content="https://hue-jackman.wimpys.world/">
+    <meta property="og:image" content="https://hue-jackman.wimpys.world/og.png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="640">
+    <meta property="og:image:alt" content="Hue Jackman — Razer Wolverine V2 Chroma RGB control for Linux showing controller inspection and two-segment RGB colour output">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <script src="theme.js"></script>
     <script src="copy.js" defer></script>
@@ -58,20 +69,12 @@
           </div>
           <p class="hero-note">Free and open source. Linux only. No background daemon, account, or Windows software required.</p>
         </div>
-        <figure class="terminal" aria-label="hue-jackman command examples">
+        <figure class="terminal">
           <figcaption><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span translate="no">hue-jackman · Linux</span></figcaption>
-          <pre><code translate="no"><span class="terminal-comment"># Check your connected controller</span>
-<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman</span>
-
-<span class="terminal-comment"># Red on the left, blue on the right</span>
-<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman rgb segments</span> <span class="terminal-argument">FF0000 0000FF</span>
-
-<span class="terminal-comment"># Classic Razer green on both strips</span>
-<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman rgb static</span> <span class="terminal-argument">44D62C</span>
-
-<span class="terminal-comment"># Breathing glow or lower brightness</span>
-<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman rgb breathe</span> <span class="terminal-argument">00FF00 FF00FF</span>
-<span class="prompt" aria-hidden="true">$ </span><span class="terminal-command">hue-jackman brightness</span> <span class="terminal-argument">128</span></code></pre>
+          <picture>
+            <source srcset="demo-still.png" media="(prefers-reduced-motion: reduce)">
+            <img class="terminal-demo" src="demo.webp" alt="Terminal demo showing hue-jackman inspecting a Razer Wolverine V2 Chroma controller, setting independent red and blue light strips, solid Razer green, two-colour breathing, and brightness" width="824" height="527" decoding="async" fetchpriority="high">
+          </picture>
         </figure>
       </section>
 
@@ -284,7 +287,7 @@
         </nav>
       </div>
       <div class="footer-bottom">
-        <p><small>© <span id="copyright-year">2026</span> <a href="https://github.com/flexiondotorg">Martin Wimpress <span class="octicon inline-icon link-external" aria-hidden="true"></span></a></small></p>
+        <p><small>© <span id="copyright-year">2026</span> <a href="https://github.com/flexiondotorg">Martin Wimpress <span class="octicon inline-icon link-external" aria-hidden="true"></span></a></small><span class="colophon-sep" aria-hidden="true">·</span><a class="tailor-colophon" href="https://tailor.wimpys.world" target="_blank" rel="noopener noreferrer"><svg class="tailor-colophon-shears" width="14" height="14" viewBox="0 0 40 40" aria-hidden="true"><path d="M14 27 17.5 19.5 31 3 25 19.5 20 29Z" fill="#b88a44"/><path d="M17.5 19.5 31 3 23 18.5Z" fill="#f0cb78"/><path fill="#f0cb78" fill-rule="evenodd" d="M22 31a8 5.6 0 1 0-16 0 8 5.6 0 1 0 16 0Zm-3 0a5 2.8 0 1 1-10 0 5 2.8 0 1 1 10 0Z" transform="rotate(-40 14 31)"/><path d="M11 18.5 19 19 37 9 25 21.5Q20 25 12 23Z" fill="#b88a44"/><path d="M11 18.5 19 19 37 9 22 19.5Z" fill="#f0cb78"/><path fill="#b88a44" fill-rule="evenodd" d="M14 20a6 5.5 0 1 0-12 0 6 5.5 0 1 0 12 0Zm-3 0a3 2.7 0 1 1-6 0 3 2.7 0 1 1 6 0Z" transform="rotate(-20 8 20)"/><circle cx="20.5" cy="21" r="2.1" fill="#594020"/><circle cx="20.5" cy="21" r="0.9" fill="#f5efe6"/></svg><span>Fitted by Tailor</span></a></p>
         <!-- tailor:links:start -->
         <nav class="connection-links" aria-label="Connect" style="display:flex;flex-wrap:wrap;gap:0.4rem">
           <a class="icon-button" href="https://wimpys.world/" aria-label="Website" title="Website" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/globe-24.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/globe-24.svg') center/contain no-repeat"></span></a>
